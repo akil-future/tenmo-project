@@ -2,11 +2,9 @@ package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
-import com.techelevator.tenmo.services.AccountService;
-import com.techelevator.tenmo.services.AccountServiceException;
-import com.techelevator.tenmo.services.AuthenticationService;
-import com.techelevator.tenmo.services.AuthenticationServiceException;
+import com.techelevator.tenmo.services.*;
 import com.techelevator.view.ConsoleService;
 
 import java.math.BigDecimal;
@@ -31,16 +29,19 @@ private static final String API_BASE_URL = "http://localhost:8080/";
     private ConsoleService console;
     private AuthenticationService authenticationService;
     private AccountService accountService;
+    private UserService userService;
 
     public static void main(String[] args) {
-    	App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL), new AccountService(API_BASE_URL));
+    	App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL)
+				, new AccountService(API_BASE_URL),new UserService(API_BASE_URL));
     	app.run();
     }
 
-    public App(ConsoleService console, AuthenticationService authenticationService, AccountService accountService) {
+    public App(ConsoleService console, AuthenticationService authenticationService, AccountService accountService, UserService userService) {
 		this.console = console;
 		this.authenticationService = authenticationService;
 		this.accountService = accountService;
+		this.userService=userService;
 	}
 
 	public void run() {
@@ -94,9 +95,27 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	}
 
 	private void sendBucks() {
-		// TODO Auto-generated method stub
-		
-	}
+	try {
+		System.out.println("-------------------------------------------");
+		System.out.println("Users");
+		System.out.println("ID           Name");
+		System.out.println("-------------------------------------------");
+		User[] users= userService.getUsers(currentUser);
+		for (User user:users){
+			System.out.println(user.getId() + "\t\t" + user.getUsername());
+		}
+
+		System.out.println("-------------------------------------------\n");
+		String id = console.getUserInput("Enter ID of user you are sending to (0 to cancel):");
+		if(id.equalsIgnoreCase("0"))
+			return;
+
+		String amount = console.getUserInput("Enter amount: ");
+
+	} catch (UserServiceException e){
+		System.out.println("User fetch error: " + e.getMessage());
+		}
+		}
 
 	private void requestBucks() {
 		// TODO Auto-generated method stub
