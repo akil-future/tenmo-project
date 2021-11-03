@@ -32,7 +32,7 @@ private static final String API_BASE_URL = "http://localhost:8080/";
     private AuthenticationService authenticationService;
     private AccountService accountService;
 
-    public static void main(String[] args) throws AccountServiceException {
+    public static void main(String[] args) {
     	App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL), new AccountService(API_BASE_URL));
     	app.run();
     }
@@ -43,7 +43,7 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 		this.accountService = accountService;
 	}
 
-	public void run() throws AccountServiceException {
+	public void run() {
 		System.out.println("*********************");
 		System.out.println("* Welcome to TEnmo! *");
 		System.out.println("*********************");
@@ -52,7 +52,7 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 		mainMenu();
 	}
 
-	private void mainMenu() throws AccountServiceException {
+	private void mainMenu() {
 		while(true) {
 			String choice = (String)console.getChoiceFromOptions(MAIN_MENU_OPTIONS);
 			if(MAIN_MENU_OPTION_VIEW_BALANCE.equals(choice)) {
@@ -74,9 +74,13 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 		}
 	}
 
-	private void viewCurrentBalance() throws AccountServiceException {
-		Account account = accountService.getAccount(currentUser);
-		System.out.println("Your current account balance is: " + account.getBalance());
+	private void viewCurrentBalance() {
+    	try {
+			Account account = accountService.getAccount(currentUser);
+			System.out.println("Your current account balance is: " + account.getBalance());
+		} catch (AccountServiceException e) {
+			System.out.println("ACCOUNT FETCH ERROR: "+e.getMessage());
+		}
 	}
 
 	private void viewTransferHistory() {
